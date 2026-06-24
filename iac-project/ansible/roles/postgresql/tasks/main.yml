@@ -1,0 +1,15 @@
+---
+- name: Installer PostgreSQL
+  apt:
+    name:
+      - postgresql
+      - postgresql-contrib
+      - python3-psycopg2
+    state: present
+    update_cache: true
+
+- name: Demarrer PostgreSQL
+  service:
+    name: postgresql
+    state: started
+    enabled: true

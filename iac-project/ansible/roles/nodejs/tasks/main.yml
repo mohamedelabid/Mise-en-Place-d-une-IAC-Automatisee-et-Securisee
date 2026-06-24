@@ -1,0 +1,14 @@
+---
+- name: Installer Node.js et npm
+  apt:
+    name:
+      - nodejs
+      - npm
+    state: present
+    update_cache: true
+
+- name: Installer PM2
+  npm:
+    name: pm2
+    global: true
+    state: present

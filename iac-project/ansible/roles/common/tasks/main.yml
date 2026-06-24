@@ -1,0 +1,13 @@
+---
+- name: Mettre a jour les paquets
+  apt:
+    update_cache: true
+
+- name: Installer les outils de base
+  apt:
+    name:
+      - curl
+      - vim
+      - htop
+      - git
+    state: present

@@ -1,0 +1,69 @@
+---
+- name: Installer Fail2ban
+  apt:
+    name:
+      - fail2ban
+      - whois
+    state: present
+    update_cache: true
+
+- name: Creer auth.log si absent
+  file:
+    path: /var/log/auth.log
+    state: touch
+    mode: "0640"
+
+- name: Creer repertoire nginx/logs
+  file:
+    path: /var/log/nginx
+    state: directory
+    mode: "0755"
+  when: inventory_hostname == 'web-server'
+
+- name: Creer error.log Nginx
+  file:
+    path: /var/log/nginx/error.log
+    state: touch
+    mode: "0640"
+  when: inventory_hostname == 'web-server'
+
+- name: Copier la config Fail2ban
+  template:
+    src: jail.local.j2
+    dest: /etc/fail2ban/jail.local
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Demarrer Fail2ban
+  shell: |
+    rm -f /var/run/fail2ban/fail2ban.sock
+    service fail2ban start || true
+    sleep 2
+    service fail2ban status
+  register: f2b_status
+  ignore_errors: true
+  changed_when: false
+
+- name: Afficher statut Fail2ban
+  debug:
+    var: f2b_status.stdout_lines
+
+- name: Limiter SSH a 3 tentatives
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^MaxAuthTries"
+    line: "MaxAuthTries 3"
+
+- name: SSH logs verbose
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^LogLevel"
+    line: "LogLevel VERBOSE"
+
+- name: Redemarrer SSH
+  shell: sleep 3 && service ssh restart
+  async: 10
+  poll: 0
+  ignore_errors: true
+  changed_when: false

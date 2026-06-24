@@ -1,0 +1,12 @@
+---
+- name: Installer Nginx
+  apt:
+    name: nginx
+    state: present
+    update_cache: true
+
+- name: Demarrer Nginx
+  service:
+    name: nginx
+    state: started
+    enabled: true

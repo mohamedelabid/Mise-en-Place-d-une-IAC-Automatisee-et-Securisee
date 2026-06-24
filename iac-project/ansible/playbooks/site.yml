@@ -1,0 +1,24 @@
+---
+- name: Configuration commune
+  hosts: all
+  become: false
+  roles:
+    - common
+
+- name: Serveur web
+  hosts: web
+  become: false
+  roles:
+    - nginx
+
+- name: Serveur applicatif
+  hosts: app
+  become: false
+  roles:
+    - nodejs
+
+- name: Base de donnees
+  hosts: db
+  become: false
+  roles:
+    - postgresql

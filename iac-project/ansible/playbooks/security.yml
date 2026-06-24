@@ -1,0 +1,6 @@
+---
+- name: Appliquer Security Layer
+  hosts: all
+  become: false
+  roles:
+    - security
